@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image'
 import { getStatus } from "@/utils/getStatus";
 import { getAllBeta } from "@/utils/queries";
 import { useQuery } from "@tanstack/react-query";
@@ -23,9 +24,9 @@ const ListBeta = () => {
   return (
     <div>
       {data?.map((item) => (
-        <div>
+        <div key={item.id}>
           <p className="text-4xl font-black">{item.title}</p>
-          <img alt={item.title} src={defaultImageString+item.media_url} className="w-[200px]"/>
+          <Image alt={item.title} src={defaultImageString+item.media_url} className="w-[200px]"/>
           <p>{getDate(new Date(item.beta_date))}</p>
           <div className="flex flex-row space-x-2">
             <p className="text-xl">{item.body}</p>

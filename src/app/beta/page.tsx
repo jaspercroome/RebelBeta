@@ -18,7 +18,7 @@ export default async function Beta() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <h1>here's the beta</h1>
+        <h1>here is the beta</h1>
         <ListBeta />
       </HydrationBoundary>
     </main>
