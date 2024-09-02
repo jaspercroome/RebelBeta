@@ -1,6 +1,13 @@
-import Image from "next/image";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
+import Auth from "./components/auth/Auth";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createServerSupabaseClient();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="h-full w-2/3 flex flex-col space-y-4 items-center">
@@ -18,6 +25,7 @@ export default function Home() {
           this site intentionally left janky -{" "}
           <a href="mailto:hey@jaspercroo.me">reach out if you want to help!</a>
         </p>
+        <Auth isSignedIn={!!session} />
       </div>
     </main>
   );

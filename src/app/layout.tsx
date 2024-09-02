@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "mapbox-gl/dist/mapbox-gl.css";
+
 import ReactQueryProvider from "@/utils/ReactQueryProvider";
+import { SupabaseProvider } from "./components/providers/AuthProvider";
+import { Header } from "@/components/Header";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,30 +16,37 @@ export const metadata: Metadata = {
   description: "Ride Beta, for Rebels",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+      },
+    },
+  );
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReactQueryProvider>
-          <div className="h-fit w-full fixed top-0 flex flex-row justify-between">
-            <a href="/">
-              <h1 className="text-4xl font-black m-2">Rebel Beta</h1>
-            </a>
-            <div className="w-fit h-8 flex fixed top-0 right-0 justify-end flex-row space-x-4 mr-8 my-2">
-              <a href="/bounties">
-                <p className="underline font-bold">Bounties</p>
-              </a>
-              <a href="/beta">
-                <p className="underline font-bold">Beta</p>
-              </a>
-            </div>
-          </div>
-          {children}
-        </ReactQueryProvider>
+        <SupabaseProvider>
+          <ReactQueryProvider>
+            <Header session={session} />
+            {children}
+          </ReactQueryProvider>
+        </SupabaseProvider>
       </body>
     </html>
   );

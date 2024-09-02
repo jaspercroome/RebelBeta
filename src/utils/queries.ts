@@ -1,21 +1,27 @@
-import { supabase } from "./supabase/client";
+import { useSupabase } from "@/app/components/providers/AuthProvider";
+import { supabaseBrowserClient } from "./supabase/client";
 
 export const getAllBeta = async () => {
-  return (await supabase.from("beta").select("*")).data;
+  const { supabase } = useSupabase();
+  return (await supabase.from("beta_reports").select("*")).data;
 };
 
 export const getOneBeta = async (betaId: number) => {
-  return (await supabase.from("beta").select().eq("id", betaId)).data;
+  const { supabase } = useSupabase();
+  return (await supabase.from("beta_reports").select().eq("id", betaId)).data;
 };
 
 export const getAllBounties = async () => {
-  return (await supabase.from("request").select("*")).data;
+  const { supabase } = useSupabase();
+  return (await supabase.from("bounties").select("*")).data;
 };
 
 export const getBounty = async (bountyId: number) => {
-  return (await supabase.from("request").select().eq("id", bountyId)).data;
+  const { supabase } = useSupabase();
+  return (await supabase.from("bounties").select().eq("id", bountyId)).data;
 };
 
 export const getBountyByBeta = async (betaId: number) => {
-  return (await supabase.from("request").select().eq("id", betaId)).data;
+  const { supabase } = useSupabase();
+  return (await supabase.from("bounty_claims").select().eq("id", betaId)).data;
 };

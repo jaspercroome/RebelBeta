@@ -4,116 +4,244 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[];
+  | Json[]
 
 export type Database = {
   public: {
     Tables: {
-      beta: {
+      beta_reports: {
         Row: {
-          beta_date: string;
-          body: string;
-          created_at: string;
-          gear_desc: string | null;
-          id: number;
-          lat: number;
-          lon: number;
-          media_url: string;
-          safety_rating: Database["public"]["Enums"]["safety rating"];
-          title: string;
-        };
+          conditions: Json | null
+          created_at: string | null
+          description: string | null
+          id: string
+          location: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
         Insert: {
-          beta_date?: string;
-          body: string;
-          created_at?: string;
-          gear_desc?: string | null;
-          id?: number;
-          lat?: number;
-          lon?: number;
-          media_url: string;
-          safety_rating?: Database["public"]["Enums"]["safety rating"];
-          title: string;
-        };
+          conditions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          location: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
         Update: {
-          beta_date?: string;
-          body?: string;
-          created_at?: string;
-          gear_desc?: string | null;
-          id?: number;
-          lat?: number;
-          lon?: number;
-          media_url?: string;
-          safety_rating?: Database["public"]["Enums"]["safety rating"];
-          title?: string;
-        };
-        Relationships: [];
-      };
-      request: {
-        Row: {
-          activity_type: string;
-          beta_id: number | null;
-          body: string;
-          bounty_value: number | null;
-          created_at: string;
-          id: number;
-          lat: number;
-          lon: number;
-          request_date: string;
-          title: string;
-        };
-        Insert: {
-          activity_type: string;
-          beta_id?: number | null;
-          body: string;
-          bounty_value?: number | null;
-          created_at?: string;
-          id?: number;
-          lat: number;
-          lon: number;
-          request_date: string;
-          title: string;
-        };
-        Update: {
-          activity_type?: string;
-          beta_id?: number | null;
-          body?: string;
-          bounty_value?: number | null;
-          created_at?: string;
-          id?: number;
-          lat?: number;
-          lon?: number;
-          request_date?: string;
-          title?: string;
-        };
+          conditions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          location?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "public_request_beta_id_fkey";
-            columns: ["beta_id"];
-            isOneToOne: false;
-            referencedRelation: "beta";
-            referencedColumns: ["id"];
+            foreignKeyName: "beta_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
-        ];
-      };
-    };
+        ]
+      }
+      bounties: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          location: string
+          reward_amount: number
+          status: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
+          valid_from: string
+          valid_until: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          location: string
+          reward_amount: number
+          status: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+          valid_from: string
+          valid_until: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          location?: string
+          reward_amount?: number
+          status?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+          valid_from?: string
+          valid_until?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bounties_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bounty_claims: {
+        Row: {
+          beta_report_id: string | null
+          bounty_id: string | null
+          claimer_id: string | null
+          created_at: string | null
+          id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          beta_report_id?: string | null
+          bounty_id?: string | null
+          claimer_id?: string | null
+          created_at?: string | null
+          id?: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          beta_report_id?: string | null
+          bounty_id?: string | null
+          claimer_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bounty_claims_beta_report_id_fkey"
+            columns: ["beta_report_id"]
+            isOneToOne: false
+            referencedRelation: "beta_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bounty_claims_bounty_id_fkey"
+            columns: ["bounty_id"]
+            isOneToOne: false
+            referencedRelation: "bounties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bounty_claims_claimer_id_fkey"
+            columns: ["claimer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          bounty_claim_id: string | null
+          created_at: string | null
+          id: string
+          status: string
+          stripe_payment_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          bounty_claim_id?: string | null
+          created_at?: string | null
+          id?: string
+          status: string
+          stripe_payment_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          bounty_claim_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          stripe_payment_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_bounty_claim_id_fkey"
+            columns: ["bounty_claim_id"]
+            isOneToOne: false
+            referencedRelation: "bounty_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          is_premium: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          is_premium?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          is_premium?: boolean | null
+        }
+        Relationships: []
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Enums: {
-      "safety rating": "red" | "black" | "blue" | "green";
-    };
+      "safety rating": "red" | "black" | "blue" | "green"
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-};
+      [_ in never]: never
+    }
+  }
+}
+
+type PublicSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
@@ -122,71 +250,71 @@ export type Tables<
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R;
+      Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-        Database["public"]["Views"])
-    ? (Database["public"]["Tables"] &
-        Database["public"]["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R;
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
       }
       ? R
       : never
-    : never;
+    : never
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I;
+      Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I;
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
       }
       ? I
       : never
-    : never;
+    : never
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U;
+      Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U;
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
       }
       ? U
       : never
-    : never;
+    : never
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof Database["public"]["Enums"]
+    | keyof PublicSchema["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-    ? Database["public"]["Enums"][PublicEnumNameOrOptions]
-    : never;
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never

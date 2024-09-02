@@ -1,9 +1,7 @@
-import ListBeta from "./list-beta";
-
-export default async function Beta() {
+export default async function Auth() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <ListBeta />
+      <Auth />
     </main>
   );
 }

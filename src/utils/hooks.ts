@@ -3,15 +3,16 @@ import { getAllBeta, getOneBeta } from "./queries";
 
 export const useAllBetaQuery = () => {
   const response = useQuery({
-    queryFn: () => getAllBeta(),
+    queryFn: async () => await getAllBeta(),
     queryKey: ["betaQuery", "all"],
   });
   return response;
 };
 export const useBetaQuery = (betaId: number) => {
   const response = useQuery({
-    queryFn: () => getOneBeta(betaId),
+    queryFn: async () => await getOneBeta(betaId),
     queryKey: ["betaQuery", "all"],
+    enabled: !!betaId,
   });
   return response;
 };
