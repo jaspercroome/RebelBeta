@@ -1,31 +1,38 @@
-// src/components/PasswordReset.tsx
+"use client";
+
+// src/components/SignIn.tsx
 import React from "react";
 import { useForm } from "react-hook-form";
 import { supabaseBrowserClient } from "@/utils/supabase/client";
 import {
-  formClass,
-  inputClass,
-  errorClass,
   buttonClass,
+  errorClass,
+  formClass,
 } from "@/utils/styles/commonClasses";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
-type PasswordResetData = {
+type SignInData = {
   email: string;
+  password: string;
 };
 
-export default function PasswordReset() {
+export default function SignIn() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PasswordResetData>();
+  } = useForm<SignInData>();
   const supabase = supabaseBrowserClient();
 
-  const onSubmit = async (data: PasswordResetData) => {
+  const onSubmit = async (data: SignInData) => {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(data.email);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
       if (error) throw error;
-      alert("Check your email for the password reset link!");
+      // Handle successful sign in (e.g., redirect to dashboard)
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
@@ -37,19 +44,25 @@ export default function PasswordReset() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={formClass}>
-      <input
+      <Input
         {...register("email", { required: "Email is required" })}
         type="email"
         placeholder="Email"
-        className={inputClass}
       />
       {errors.email && (
         <span className={errorClass}>{errors.email.message}</span>
       )}
 
-      <button type="submit" className={buttonClass}>
-        Reset Password
-      </button>
+      <Input
+        {...register("password", { required: "Password is required" })}
+        type="password"
+        placeholder="Password"
+      />
+      {errors.password && (
+        <span className={errorClass}>{errors.password.message}</span>
+      )}
+
+      <Button type="submit">Sign In</Button>
     </form>
   );
 }

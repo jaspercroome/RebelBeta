@@ -4,10 +4,11 @@ import { useForm } from "react-hook-form";
 import { supabaseBrowserClient } from "@/utils/supabase/client";
 import {
   formClass,
-  inputClass,
   errorClass,
   buttonClass,
 } from "@/utils/styles/commonClasses";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 type SignUpData = {
   email: string;
@@ -48,27 +49,25 @@ export default function SignUp() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={formClass}>
-      <input
+      <Input
         {...register("email", { required: "Email is required" })}
         type="email"
         placeholder="Email"
-        className={inputClass}
       />
       {errors.email && (
         <span className={errorClass}>{errors.email.message}</span>
       )}
 
-      <input
+      <Input
         {...register("password", { required: "Password is required" })}
         type="password"
         placeholder="Password"
-        className={inputClass}
       />
       {errors.password && (
         <span className={errorClass}>{errors.password.message}</span>
       )}
 
-      <input
+      <Input
         {...register("confirmPassword", {
           required: "Please confirm your password",
           validate: (val: string) => {
@@ -79,15 +78,14 @@ export default function SignUp() {
         })}
         type="password"
         placeholder="Confirm Password"
-        className={inputClass}
       />
       {errors.confirmPassword && (
         <span className={errorClass}>{errors.confirmPassword.message}</span>
       )}
 
-      <button type="submit" className={buttonClass}>
+      <Button type="submit" className={buttonClass}>
         Sign Up
-      </button>
+      </Button>
     </form>
   );
 }

@@ -3,6 +3,7 @@
 import React from "react";
 import { supabaseBrowserClient } from "@/utils/supabase/client";
 import { buttonClass } from "@/utils/styles/commonClasses";
+import { Button } from "../ui/button";
 
 export default function SignOut() {
   const supabase = supabaseBrowserClient();
@@ -21,9 +22,5 @@ export default function SignOut() {
     }
   };
 
-  return (
-    <button onClick={handleSignOut} className={buttonClass}>
-      Sign Out
-    </button>
-  );
+  return <Button onClick={handleSignOut}>Sign Out</Button>;
 }

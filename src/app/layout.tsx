@@ -4,10 +4,11 @@ import "./globals.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import ReactQueryProvider from "@/utils/ReactQueryProvider";
-import { SupabaseProvider } from "./components/providers/AuthProvider";
+import { SupabaseProvider } from "../components/providers/SupabaseProvider";
 import { Header } from "@/components/Header";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,8 +44,15 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SupabaseProvider>
           <ReactQueryProvider>
-            <Header session={session} />
-            {children}
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header session={session} />
+              {children}
+            </ThemeProvider>
           </ReactQueryProvider>
         </SupabaseProvider>
       </body>

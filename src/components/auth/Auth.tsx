@@ -6,14 +6,22 @@ import SignUp from "./SignUp";
 import PasswordReset from "./PasswordReset";
 import SignOut from "./SignOut";
 import { linkClass } from "@/utils/styles/commonClasses";
+import { useSupabase } from "../providers/SupabaseProvider";
+import { Button } from "../ui/button";
 
 type AuthMode = "signin" | "signup" | "reset";
 
 export default function Auth({ isSignedIn = false }) {
   const [mode, setMode] = useState<AuthMode>("signin");
+  const { user } = useSupabase();
 
-  if (isSignedIn) {
-    return <SignOut />;
+  if (isSignedIn || Boolean(user)) {
+    return (
+      <div className="h-full w-full flex flex-col justify-center items-center">
+        <p className="text-xl">👋, {user?.email}!</p>
+        <SignOut />
+      </div>
+    );
   }
 
   return (
@@ -23,15 +31,11 @@ export default function Auth({ isSignedIn = false }) {
           <SignIn />
           <p className="mt-4 text-center">
             Don't have an account?{" "}
-            <button onClick={() => setMode("signup")} className={linkClass}>
-              Sign Up
-            </button>
+            <Button onClick={() => setMode("signup")}>Sign Up</Button>
           </p>
           <p className="mt-2 text-center">
             Forgot your password?{" "}
-            <button onClick={() => setMode("reset")} className={linkClass}>
-              Reset Password
-            </button>
+            <Button onClick={() => setMode("reset")}>Reset Password</Button>
           </p>
         </>
       )}
@@ -40,9 +44,7 @@ export default function Auth({ isSignedIn = false }) {
           <SignUp />
           <p className="mt-4 text-center">
             Already have an account?{" "}
-            <button onClick={() => setMode("signin")} className={linkClass}>
-              Sign In
-            </button>
+            <Button onClick={() => setMode("signin")}>Sign In</Button>
           </p>
         </>
       )}
@@ -51,9 +53,9 @@ export default function Auth({ isSignedIn = false }) {
           <PasswordReset />
           <p className="mt-4 text-center">
             Remember your password?{" "}
-            <button onClick={() => setMode("signin")} className={linkClass}>
+            <Button onClick={() => setMode("signin")} className={linkClass}>
               Sign In
-            </button>
+            </Button>
           </p>
         </>
       )}
