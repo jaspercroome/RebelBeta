@@ -37,8 +37,8 @@ export default async function RootLayout({
   );
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -50,7 +50,7 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Header session={session} />
+              <Header user={user} />
               {children}
             </ThemeProvider>
           </ReactQueryProvider>

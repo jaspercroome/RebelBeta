@@ -1,8 +1,8 @@
-import { Session } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 
-export const Header = (props: { session: Session | null }) => {
-  const { session } = props;
+export const Header = (props: { user: User | null }) => {
+  const { user } = props;
 
   return (
     <div className="h-fit w-full fixed top-0 flex flex-row justify-between">
@@ -16,8 +16,8 @@ export const Header = (props: { session: Session | null }) => {
         <Link href="/beta">
           <p className="underline font-bold">Beta</p>
         </Link>
-        {session ? (
-          <p className="font-extrabold text-green-600">{session.user.email}</p>
+        {user ? (
+          <p className="font-extrabold text-green-600">{user.email}</p>
         ) : (
           <Link href="/signup">
             <p className="underline font-bold text-orange-600">Sign Up</p>
