@@ -39,7 +39,9 @@ export const BetaForm = () => {
   return (
     <Card className="w-4/5">
       <CardHeader>
-        <CardTitle>New Beta</CardTitle>
+        <CardTitle>
+          <p className="text-4xl font-black">New Beta</p>
+        </CardTitle>
         <CardDescription>Sharing is Caring</CardDescription>
       </CardHeader>
       <CardContent>
@@ -51,9 +53,7 @@ export const BetaForm = () => {
           </TabsList>
           <TabsContent value={CategoryOption.BIKE}>
             <Tabs defaultValue={undefined} className="w-full">
-              <TabsList
-                className={`grid w-full grid-cols-${Object.keys(SubCategoryBikeOption).length}`}
-              >
+              <TabsList className={`grid w-full grid-cols-4`}>
                 {Object.entries(SubCategoryBikeOption).map(([_key, item]) => (
                   <TabsTrigger value={item}>{item}</TabsTrigger>
                 ))}
@@ -70,9 +70,7 @@ export const BetaForm = () => {
           </TabsContent>
           <TabsContent value={CategoryOption.HIKE}>
             <Tabs defaultValue={undefined}>
-              <TabsList
-                className={`grid w-full grid-cols-${Object.keys(SubCategoryHikeOption).length}`}
-              >
+              <TabsList className={`grid w-full grid-cols-3`}>
                 {Object.entries(SubCategoryHikeOption).map(([_key, item]) => (
                   <TabsTrigger value={item}>{item}</TabsTrigger>
                 ))}

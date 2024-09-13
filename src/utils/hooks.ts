@@ -7,8 +7,10 @@ import {
   getOneBeta,
   getSubscription,
   patchSubscription,
+  postBeta,
 } from "./queries";
 import { useSupabase } from "@/components/providers/SupabaseProvider";
+import { Database } from "./supabase/types";
 
 export const useAllBetaQuery = () => {
   const response = useQuery({
@@ -24,6 +26,13 @@ export const useBetaQuery = (betaId: number) => {
     enabled: !!betaId,
   });
   return response;
+};
+export const usePostBetaMutation = () => {
+  return useMutation({
+    mutationFn: async (
+      beta: Database["public"]["Tables"]["beta_reports"]["Insert"],
+    ) => await postBeta(beta),
+  });
 };
 
 export const useSubscription = (userId: string) => {

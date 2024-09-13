@@ -1,25 +1,62 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
+import { format, setMinutes, setHours } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { ChangeEventHandler } from "react";
+import { Input } from "./input";
 
 interface DatePickerProps {
   handleSelect: (date?: Date) => void;
   range?: "past" | "future";
+  prompt?: string;
+  showTime?: boolean;
+  value?: Date;
 }
 
-export function DatePicker({ handleSelect, range }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>();
+export function DatePicker({
+  handleSelect,
+  range,
+  prompt,
+  value,
+}: DatePickerProps) {
+  const dateValue = value ? new Date(value) : undefined;
+  const timeValue = dateValue?.getTime();
+  const [date, setDate] = React.useState<Date | undefined>(dateValue);
+  const [time, setTime] = React.useState<string>("00:00");
 
-  const handleClick = (d?: Date) => {
-    setDate(d);
-    handleSelect(d);
+  const handleTimeChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const time = e.target.value;
+    if (!date) {
+      setTime(time);
+      return;
+    }
+    const [hours, minutes] = time.split(":").map((str) => parseInt(str, 10));
+    const newSelectedDate = setHours(setMinutes(date, minutes), hours);
+    setDate(newSelectedDate);
+    setTime(time);
+  };
+
+  const handleDaySelect = (date: Date | undefined) => {
+    if (!time || !date) {
+      setDate(date);
+      return;
+    }
+    const [hours, minutes] = time.split(":").map((str) => parseInt(str, 10));
+    const newDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hours,
+      minutes,
+    );
+    setDate(newDate);
+    handleSelect(newDate);
   };
 
   return (
@@ -33,16 +70,22 @@ export function DatePicker({ handleSelect, range }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? format(date, "Pp") : <span>{prompt ?? "Pick a date"}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
+        <Input
+          type="time"
+          onChange={handleTimeChange}
+          defaultValue={timeValue ?? new Date().getTime() + 12 * 1000 * 60}
+          className="w-fit border-none"
+        />
         <Calendar
           mode="single"
           selected={date}
           fromDate={range === "future" ? new Date() : undefined}
           toDate={range === "past" ? new Date() : undefined}
-          onSelect={handleClick}
+          onSelect={handleDaySelect}
           initialFocus
         />
       </PopoverContent>

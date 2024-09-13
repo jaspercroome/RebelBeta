@@ -4,10 +4,10 @@ export const FUN_TYPE = ["Type 0", "Type 1", "Type 2", "Type 3"] as const;
 export const funTypeMap: {
   [key in (typeof FUN_TYPE)[number]]: string;
 } = {
-  "Type 0": "Kind of boring, actually",
-  "Type 1": "Straight up fun",
-  "Type 2": "Hard in the moment, but fun to think of",
-  "Type 3": "Damn, that was hard!",
+  "Type 0": "😴",
+  "Type 1": "😜",
+  "Type 2": "🥵/😅",
+  "Type 3": "😵",
 };
 
 export const baseFormSchema = {

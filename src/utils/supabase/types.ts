@@ -11,31 +11,43 @@ export type Database = {
     Tables: {
       beta_reports: {
         Row: {
-          conditions: Json | null
+          body: string | null
           created_at: string | null
-          description: string | null
+          date: string | null
+          do_it_again: boolean | null
+          fun_type: string | null
+          gear: Json | null
           id: string
-          location: string
+          location: number[]
+          spice: number | null
           title: string
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
-          conditions?: Json | null
+          body?: string | null
           created_at?: string | null
-          description?: string | null
+          date?: string | null
+          do_it_again?: boolean | null
+          fun_type?: string | null
+          gear?: Json | null
           id?: string
-          location: string
+          location: number[]
+          spice?: number | null
           title: string
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
-          conditions?: Json | null
+          body?: string | null
           created_at?: string | null
-          description?: string | null
+          date?: string | null
+          do_it_again?: boolean | null
+          fun_type?: string | null
+          gear?: Json | null
           id?: string
-          location?: string
+          location?: number[]
+          spice?: number | null
           title?: string
           updated_at?: string | null
           user_id?: string | null
@@ -204,6 +216,8 @@ export type Database = {
           full_name: string
           id: string
           is_premium: boolean | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -211,6 +225,8 @@ export type Database = {
           full_name: string
           id?: string
           is_premium?: boolean | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -218,6 +234,8 @@ export type Database = {
           full_name?: string
           id?: string
           is_premium?: boolean | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
         }
         Relationships: []
       }

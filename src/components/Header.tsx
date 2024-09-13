@@ -5,7 +5,7 @@ export const Header = (props: { user: User | null }) => {
   const { user } = props;
 
   return (
-    <div className="h-fit w-full fixed top-0 flex flex-row justify-between">
+    <div className="h-fit w-full fixed top-0 flex flex-row justify-between bg-white z-10">
       <Link href="/">
         <h1 className="text-4xl font-black m-2">Rebel Beta</h1>
       </Link>
