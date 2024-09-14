@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import React, { useEffect } from "react";
@@ -26,7 +27,6 @@ import {
 import { FormMap } from "@/components/map/FormMap";
 
 import { usePostBetaMutation } from "@/utils/hooks";
-import router from "next/router";
 import {
   baseFormSchema,
   retrieveLocalForm,
@@ -35,7 +35,6 @@ import {
   FUN_TYPE,
   funTypeMap,
 } from "../utils";
-import { register } from "module";
 
 const gravelSchema = z.object({
   ...baseFormSchema,
@@ -50,71 +49,77 @@ const gravelSchema = z.object({
 });
 
 type GravelSchema = z.infer<typeof gravelSchema>;
-
-const savedState = retrieveLocalForm("newGravelForm") as
-  | {
-      saveDate: string;
-      data: GravelSchema;
-    }
-  | undefined;
-
-const savedValues = savedState?.data;
+const formTitle = "newGravelForm";
 
 export const GravelForm = () => {
+  const savedState = retrieveLocalForm(formTitle) as
+    | {
+        saveDate: string;
+        data: GravelSchema;
+      }
+    | undefined;
+
+  const savedValues = savedState?.data;
   const form = useForm<z.infer<typeof gravelSchema>>({
     resolver: zodResolver(gravelSchema),
     defaultValues: {
       ...savedValues,
-      spice: 3,
-      funType: "Type 1",
     },
   });
 
-  const supabaseUpdate = usePostBetaMutation();
+  const { mutateAsync: supabaseUpdate } = usePostBetaMutation();
+
+  const router = useRouter();
 
   const formValues = form.watch();
 
   useEffect(() => {
     const handleChange = (values: GravelSchema) => {
-      saveFormLocally(values, "newGravelForm");
+      saveFormLocally(values, formTitle);
     };
 
     handleChange(formValues);
   }, [formValues]);
 
-  const onSubmit = (values: GravelSchema) => {
-    supabaseUpdate
-      .mutateAsync({
-        ...values,
-        date: values.date.toLocaleDateString(),
-      })
-      .then(() => {
+  const onSubmit = async (values: GravelSchema) => {
+    const data = {
+      do_it_again: values.doItAgain,
+      created_at: values.date.toLocaleDateString(),
+      body: values.body,
+      gear: values.gear,
+      location: values.location,
+      title: values.title,
+    };
+    await supabaseUpdate(data)
+      .then((d) => {
         toast("Beta submitted successfully.");
-        clearLocalForm("newGravelForm");
-        router;
+        clearLocalForm(formTitle);
+        router.push("/beta");
+      })
+      .catch((e) => {
+        toast(`An error occurred: ${e}`);
       });
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-full">
           <p className="text-2xl font-bold">Gravel</p>
+          {JSON.stringify(formValues, null, 2)}
           {savedState && (
             <p className="text-xs italic">
               Draft - Last saved{" "}
               {new Date(savedState?.saveDate).toLocaleString()}
             </p>
           )}
-          <div className="flex flex-row w-full gap-4 items-end">
+          <div className="flex flex-row w-full gap-4 items-end flex-wrap">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-3/4">
-                  <FormLabel>
-                    <p className="text-lg font-bold">Title</p>
-                  </FormLabel>
+                  <FormLabel className="text-lg font-bold">Title</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Title for your Beta Report"
@@ -130,9 +135,7 @@ export const GravelForm = () => {
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-1/6 items-start">
-                  <FormLabel>
-                    <p className="text-md">Activity date</p>
-                  </FormLabel>
+                  <FormLabel className="text-md">Activity date</FormLabel>
                   <FormControl>
                     <DatePicker
                       value={field.value}
@@ -153,12 +156,10 @@ export const GravelForm = () => {
             name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  <p className="text-lg font-bold">
-                    {field.value
-                      ? `Location: ${field.value}`
-                      : "Where did it happen?"}
-                  </p>
+                <FormLabel className="text-lg font-bold">
+                  {field.value
+                    ? `Location: ${field.value}`
+                    : "Where did it happen?"}
                 </FormLabel>
                 <div className="w-full h-[400px]">
                   <FormMap
@@ -183,14 +184,11 @@ export const GravelForm = () => {
                 const funTypes = FUN_TYPE;
                 return (
                   <FormItem className="flex flex-col w-1/4">
-                    <FormLabel>
-                      <p className="text-lg font-bold">
-                        What type of fun was it?
-                      </p>
+                    <FormLabel className="text-lg font-bold">
+                      What type of fun was it?
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
-                        defaultValue={funTypes[1]}
                         value={field.value}
                         ref={field.ref}
                         onBlur={field.onBlur}
@@ -220,36 +218,33 @@ export const GravelForm = () => {
               name="spice"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-1/3">
-                  <FormLabel>
-                    <p className="text-lg font-bold">How Spicy was it?</p>
+                  <FormLabel className="text-lg font-bold">
+                    How Spicy was it?
                   </FormLabel>
                   <FormControl>
                     <Slider
                       min={1}
                       max={5}
                       step={1}
-                      defaultValue={[3]}
                       ref={field.ref}
                       onBlur={field.onBlur}
                       value={[field.value]}
                       onValueChange={(e) => field.onChange(e[0])}
                     />
                   </FormControl>
-                  <FormDescription>
-                    <p
-                      className="text-2xl font-bold"
-                      title={field.value.toString()}
-                    >
-                      {field.value < 2
-                        ? "🧊 - so chill"
-                        : field.value < 3
-                          ? "🥛 - chill"
-                          : field.value < 4
-                            ? "🫑 - decent"
-                            : field.value < 5
-                              ? "🌶️ - spicy"
-                              : "🔥 - yowzers"}
-                    </p>
+                  <FormDescription
+                    className="text-2xl font-bold"
+                    title={field.value.toString()}
+                  >
+                    {field.value < 2
+                      ? "🧊 - so chill"
+                      : field.value < 3
+                        ? "🥛 - chill"
+                        : field.value < 4
+                          ? "🫑 - decent"
+                          : field.value < 5
+                            ? "🌶️ - spicy"
+                            : "🔥 - yowzers"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -260,16 +255,15 @@ export const GravelForm = () => {
               name="doItAgain"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-1/4">
-                  <FormLabel>
-                    <p className="text-lg font-bold">Would you do it again?</p>
+                  <FormLabel className="text-lg font-bold">
+                    Would you do it again?
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
-                      defaultValue="true"
                       value={field.value ? "true" : "false"}
                       onBlur={field.onBlur}
-                      onValueChange={(v) => field.onChange(v === "true")}
                       ref={field.ref}
+                      onValueChange={(val) => field.onChange(val === "true")}
                     >
                       {["true", "false"].map((item) => (
                         <div className="flex items-center space-x-2" key={item}>
@@ -292,8 +286,8 @@ export const GravelForm = () => {
             name="body"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  <p className="text-2xl font-black inline-block">Details</p>
+                <FormLabel className="text-2xl font-black inline-block">
+                  Details
                 </FormLabel>
                 <FormControl>
                   <Textarea {...field} />
@@ -317,10 +311,8 @@ export const GravelForm = () => {
                 name="gear.bike"
                 render={({ field }) => (
                   <FormItem className="flex flex-col w-1/2">
-                    <FormLabel>
-                      <p className="text-lg font-bold">
-                        What kind of bike were you on?
-                      </p>
+                    <FormLabel className="text-lg font-bold">
+                      What kind of bike were you on?
                     </FormLabel>
                     <FormControl>
                       <Input {...field} />
@@ -336,10 +328,8 @@ export const GravelForm = () => {
                   name="gear.tires"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        <p className="text-lg font-bold">
-                          What tires were you running?
-                        </p>
+                      <FormLabel className="text-lg font-bold">
+                        What tires were you running?
                       </FormLabel>
                       <FormControl>
                         <Input {...field} />
@@ -355,9 +345,7 @@ export const GravelForm = () => {
                     name="gear.tireWidth"
                     render={({ field }) => (
                       <FormItem className="w-fit">
-                        <FormLabel>
-                          <p className="text-md">Width (mm)</p>
-                        </FormLabel>
+                        <FormLabel className="text-md">Width (mm)</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -379,9 +367,7 @@ export const GravelForm = () => {
                     name="gear.psi"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          <p className="text-md">PSI</p>
-                        </FormLabel>
+                        <FormLabel className="text-md">PSI</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -403,9 +389,7 @@ export const GravelForm = () => {
                     name="gear.flats"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          <p className="text-md">Any flats?</p>
-                        </FormLabel>
+                        <FormLabel className="text-md">Any flats?</FormLabel>
                         <FormControl>
                           <Input
                             {...field}

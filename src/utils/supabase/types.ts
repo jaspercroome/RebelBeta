@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       beta_reports: {
         Row: {
+          beta_type: string | null
           body: string | null
           created_at: string | null
           date: string | null
@@ -25,6 +26,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          beta_type?: string | null
           body?: string | null
           created_at?: string | null
           date?: string | null
@@ -39,6 +41,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          beta_type?: string | null
           body?: string | null
           created_at?: string | null
           date?: string | null

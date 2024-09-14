@@ -17,21 +17,27 @@ export const useAllBetaQuery = () => {
     queryFn: async () => await getAllBeta(),
     queryKey: ["betaQuery", "all"],
   });
-  return response;
+  return { ...response, data: response.data?.data };
 };
 export const useBetaQuery = (betaId: number) => {
   const response = useQuery({
     queryFn: async () => await getOneBeta(betaId),
-    queryKey: ["betaQuery", "all"],
+    queryKey: ["betaQuery", betaId],
     enabled: !!betaId,
   });
-  return response;
+  return { ...response, data: response.data?.data };
 };
 export const usePostBetaMutation = () => {
   return useMutation({
     mutationFn: async (
       beta: Database["public"]["Tables"]["beta_reports"]["Insert"],
     ) => await postBeta(beta),
+    onError: (e) => {
+      throw e;
+    },
+    onSuccess: (d) => {
+      return d;
+    },
   });
 };
 
@@ -89,7 +95,6 @@ export const useProtectedRoute = () => {
 
 export const useProtectedAction = () => {
   const { user } = useSupabase();
-  console.log({ user });
   const router = useRouter();
 
   return useCallback(

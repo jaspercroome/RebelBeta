@@ -78,7 +78,7 @@ export function DatePicker({
         <Input
           type="time"
           onChange={handleTimeChange}
-          defaultValue={timeValue ?? new Date().getTime() + 12 * 1000 * 60}
+          value={time}
           className="w-fit border-none"
         />
         <Calendar

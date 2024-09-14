@@ -39,27 +39,29 @@ export const BetaForm = () => {
   return (
     <Card className="w-4/5">
       <CardHeader>
-        <CardTitle>
-          <p className="text-4xl font-black">New Beta</p>
-        </CardTitle>
+        <CardTitle className="text-4xl font-black">New Beta</CardTitle>
         <CardDescription>Sharing is Caring</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue={CategoryOption.BIKE} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            {Object.entries(CategoryOption).map(([_key, item]) => (
-              <TabsTrigger value={item}>{item}</TabsTrigger>
+            {Object.entries(CategoryOption).map(([key, item]) => (
+              <TabsTrigger value={item} key={key}>
+                {item}
+              </TabsTrigger>
             ))}
           </TabsList>
           <TabsContent value={CategoryOption.BIKE}>
             <Tabs defaultValue={undefined} className="w-full">
               <TabsList className={`grid w-full grid-cols-4`}>
-                {Object.entries(SubCategoryBikeOption).map(([_key, item]) => (
-                  <TabsTrigger value={item}>{item}</TabsTrigger>
+                {Object.entries(SubCategoryBikeOption).map(([key, item]) => (
+                  <TabsTrigger value={item} key={key}>
+                    {item}
+                  </TabsTrigger>
                 ))}
               </TabsList>
-              {Object.entries(SubCategoryBikeOption).map(([_key, item]) => (
-                <TabsContent value={item}>
+              {Object.entries(SubCategoryBikeOption).map(([key, item]) => (
+                <TabsContent value={item} key={key}>
                   <DynamicForm
                     category={CategoryOption.BIKE}
                     subCategory={item}
@@ -71,12 +73,14 @@ export const BetaForm = () => {
           <TabsContent value={CategoryOption.HIKE}>
             <Tabs defaultValue={undefined}>
               <TabsList className={`grid w-full grid-cols-3`}>
-                {Object.entries(SubCategoryHikeOption).map(([_key, item]) => (
-                  <TabsTrigger value={item}>{item}</TabsTrigger>
+                {Object.entries(SubCategoryHikeOption).map(([key, item]) => (
+                  <TabsTrigger value={item} key={key}>
+                    {item}
+                  </TabsTrigger>
                 ))}
               </TabsList>
-              {Object.entries(SubCategoryHikeOption).map(([_key, item]) => (
-                <TabsContent value={item}>
+              {Object.entries(SubCategoryHikeOption).map(([key, item]) => (
+                <TabsContent value={item} key={key}>
                   <DynamicForm
                     category={CategoryOption.HIKE}
                     subCategory={item}

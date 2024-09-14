@@ -1,4 +1,5 @@
 "use client";
+import { BetaTable } from "@/components/beta/BetaTable";
 import { NewBetaCard } from "@/components/beta/NewBetaCard";
 import { NewBountyCard } from "@/components/bounties/NewBountyCard";
 import { useAllBetaQuery, useProtectedAction } from "@/utils/hooks";
@@ -17,7 +18,7 @@ const ListBeta = () => {
 
   return (
     <div className="h-full flex flex-col w-full gap-4 justify-center items-center">
-      {beta?.map((item) => <p>{item.location}</p>)}
+      <BetaTable data={beta} />
       <div className="h-fit py-2 px-4 w-fit flex flex-row gap-4">
         <NewBountyCard />
         <NewBetaCard />

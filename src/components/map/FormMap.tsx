@@ -78,7 +78,6 @@ export const FormMap: React.FC<FormMapProps> = ({
       });
 
       geocoderRef.current.on("result", ({ result }) => {
-        console.log(result);
         const center = result.center as [number, number];
         onLocationChange(center);
         saveFormLocally(result, "betaMap");
