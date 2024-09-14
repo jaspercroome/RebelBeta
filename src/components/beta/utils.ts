@@ -39,3 +39,21 @@ export enum SubCategoryHikeOption {
   BACKPACKING = "BackPacking",
   TRAILRUNNING = "Trail Running",
 }
+
+export const saveFormLocally = (data: object, formTitle: string) => {
+  const saveDate = new Date().toUTCString();
+  const storageItem = { saveDate, data };
+  localStorage.setItem(formTitle, JSON.stringify(storageItem));
+};
+export const retrieveLocalForm = (formTitle: string) => {
+  const item = localStorage.getItem(formTitle);
+  if (item) {
+    return JSON.parse(item) as {
+      saveDate: string;
+      data: object;
+    };
+  }
+};
+export const clearLocalForm = (formTitle: string) => {
+  localStorage.removeItem(formTitle);
+};

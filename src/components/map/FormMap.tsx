@@ -1,12 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import mapboxgl, { LngLatLike, Map, Marker } from "mapbox-gl";
 import MapboxGeocoder, { Result } from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import {
-  clearLocalForm,
-  retrieveLocalForm,
-  saveFormLocally,
-} from "../beta/forms/utils";
+import { retrieveLocalForm, saveFormLocally } from "../beta/utils";
 
 interface FormMapProps {
   onLocationChange: (lngLat: [number, number]) => void;
@@ -36,12 +32,28 @@ export const FormMap: React.FC<FormMapProps> = ({
       minZoom: 2.5,
     });
 
+    // Initialize marker
+    markerRef.current = new Marker({ draggable: true })
+      .setLngLat(value)
+      .addTo(mapRef.current);
+
+    // Handle marker drag events
+    markerRef.current.on("dragend", () => {
+      const lngLat = markerRef.current?.getLngLat();
+      if (lngLat) {
+        onLocationChange([lngLat.lng, lngLat.lat]);
+        saveFormLocally({ center: [lngLat.lng, lngLat.lat] }, "betaMap");
+      }
+    });
+
     if (savedLocationData) {
       const data = savedLocationData.data as Result;
       mapRef.current.flyTo({
         center: data.center as LngLatLike,
         zoom: 15,
       });
+      // Move marker to saved location
+      markerRef.current.setLngLat(data.center as LngLatLike);
     }
 
     mapRef.current.on("load", () => {
@@ -61,9 +73,7 @@ export const FormMap: React.FC<FormMapProps> = ({
       geocoderRef.current = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl as any,
-        marker: new Marker({
-          draggable: true,
-        }),
+        marker: false, // Disable default marker
         clearOnBlur: false,
       });
 
@@ -72,6 +82,8 @@ export const FormMap: React.FC<FormMapProps> = ({
         const center = result.center as [number, number];
         onLocationChange(center);
         saveFormLocally(result, "betaMap");
+        // Move marker to new location
+        markerRef.current?.setLngLat(center);
       });
 
       mapRef.current.addControl(geocoderRef.current);
@@ -89,6 +101,10 @@ export const FormMap: React.FC<FormMapProps> = ({
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
+      }
+      if (markerRef.current) {
+        markerRef.current.remove();
+        markerRef.current = null;
       }
     };
   }, []);

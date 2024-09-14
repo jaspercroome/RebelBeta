@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, useEffect } from "react";
 import { Input } from "./input";
 
 interface DatePickerProps {
@@ -40,6 +40,7 @@ export function DatePicker({
     const newSelectedDate = setHours(setMinutes(date, minutes), hours);
     setDate(newSelectedDate);
     setTime(time);
+    handleSelect(newSelectedDate);
   };
 
   const handleDaySelect = (date: Date | undefined) => {

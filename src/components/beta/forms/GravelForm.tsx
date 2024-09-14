@@ -2,6 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import {
@@ -12,19 +14,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { FUN_TYPE, baseFormSchema, funTypeMap } from "../utils";
+  Input,
+  RadioGroup,
+  RadioGroupItem,
+  Label,
+  DatePicker,
+  Slider,
+  Textarea,
+  Button,
+} from "@/components/ui";
 import { FormMap } from "@/components/map/FormMap";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { DatePicker } from "@/components/ui/datepicker";
-import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+
 import { usePostBetaMutation } from "@/utils/hooks";
-import React from "react";
-import { clearLocalForm, retrieveLocalForm, saveFormLocally } from "./utils";
+import router from "next/router";
+import {
+  baseFormSchema,
+  retrieveLocalForm,
+  saveFormLocally,
+  clearLocalForm,
+  FUN_TYPE,
+  funTypeMap,
+} from "../utils";
+import { register } from "module";
 
 const gravelSchema = z.object({
   ...baseFormSchema,
@@ -42,7 +53,7 @@ type GravelSchema = z.infer<typeof gravelSchema>;
 
 const savedState = retrieveLocalForm("newGravelForm") as
   | {
-      saveDate: Date;
+      saveDate: string;
       data: GravelSchema;
     }
   | undefined;
@@ -61,30 +72,38 @@ export const GravelForm = () => {
 
   const supabaseUpdate = usePostBetaMutation();
 
-  const onSubmit = (values: GravelSchema) => {
-    supabaseUpdate.mutateAsync({
-      ...values,
-      date: values.date.toLocaleDateString(),
-    });
-    clearLocalForm("newGravelForm");
-  };
+  const formValues = form.watch();
 
-  const handleChange = (values: GravelSchema) => {
-    saveFormLocally(values, "newGravelForm");
+  useEffect(() => {
+    const handleChange = (values: GravelSchema) => {
+      saveFormLocally(values, "newGravelForm");
+    };
+
+    handleChange(formValues);
+  }, [formValues]);
+
+  const onSubmit = (values: GravelSchema) => {
+    supabaseUpdate
+      .mutateAsync({
+        ...values,
+        date: values.date.toLocaleDateString(),
+      })
+      .then(() => {
+        toast("Beta submitted successfully.");
+        clearLocalForm("newGravelForm");
+        router;
+      });
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        onBlur={() => handleChange(form.getValues())}
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
           <p className="text-2xl font-bold">Gravel</p>
-          {JSON.stringify(savedState, null, 2)}
-          {Boolean(savedState?.saveDate) ?? (
+          {savedState && (
             <p className="text-xs italic">
-              Last saved {savedState?.saveDate.toUTCString()}
+              Draft - Last saved{" "}
+              {new Date(savedState?.saveDate).toLocaleString()}
             </p>
           )}
           <div className="flex flex-row w-full gap-4 items-end">
@@ -118,7 +137,7 @@ export const GravelForm = () => {
                     <DatePicker
                       value={field.value}
                       handleSelect={(d) => {
-                        if (d !== undefined) form.setValue("date", d);
+                        if (d !== undefined) form.setValue("date", new Date(d));
                       }}
                       range="past"
                       prompt="Pick a date & time"
@@ -170,7 +189,13 @@ export const GravelForm = () => {
                       </p>
                     </FormLabel>
                     <FormControl>
-                      <RadioGroup defaultValue={funTypes[1]}>
+                      <RadioGroup
+                        defaultValue={funTypes[1]}
+                        value={field.value}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        onValueChange={field.onChange}
+                      >
                         {funTypes.map((item) => (
                           <div
                             className="flex items-center space-x-2"
@@ -203,9 +228,10 @@ export const GravelForm = () => {
                       min={1}
                       max={5}
                       step={1}
-                      defaultValue={[field.value]}
+                      defaultValue={[3]}
                       ref={field.ref}
                       onBlur={field.onBlur}
+                      value={[field.value]}
                       onValueChange={(e) => field.onChange(e[0])}
                     />
                   </FormControl>
@@ -240,9 +266,9 @@ export const GravelForm = () => {
                   <FormControl>
                     <RadioGroup
                       defaultValue="true"
-                      value={field.value?.toString()}
+                      value={field.value ? "true" : "false"}
                       onBlur={field.onBlur}
-                      onValueChange={field.onChange}
+                      onValueChange={(v) => field.onChange(v === "true")}
                       ref={field.ref}
                     >
                       {["true", "false"].map((item) => (
@@ -272,6 +298,11 @@ export const GravelForm = () => {
                 <FormControl>
                   <Textarea {...field} />
                 </FormControl>
+                <FormDescription>
+                  {field.value.length < 100
+                    ? `${100 - field.value.length} more characters needed`
+                    : "Nice Description!"}
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -328,7 +359,15 @@ export const GravelForm = () => {
                           <p className="text-md">Width (mm)</p>
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" min={0} max={200} />
+                          <Input
+                            {...field}
+                            type="number"
+                            min={0}
+                            max={200}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
                         </FormControl>
                         <FormDescription></FormDescription>
                         <FormMessage />
@@ -344,7 +383,15 @@ export const GravelForm = () => {
                           <p className="text-md">PSI</p>
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" min={0} max={200} />
+                          <Input
+                            {...field}
+                            type="number"
+                            min={0}
+                            max={200}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
                         </FormControl>
                         <FormDescription></FormDescription>
                         <FormMessage />
@@ -360,7 +407,14 @@ export const GravelForm = () => {
                           <p className="text-md">Any flats?</p>
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" min={0} />
+                          <Input
+                            {...field}
+                            type="number"
+                            min={0}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
                         </FormControl>
                         <FormDescription></FormDescription>
                         <FormMessage />

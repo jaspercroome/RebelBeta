@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -52,6 +53,7 @@ export default async function RootLayout({
             >
               <Header user={user} />
               {children}
+              <Toaster />
             </ThemeProvider>
           </ReactQueryProvider>
         </SupabaseProvider>
