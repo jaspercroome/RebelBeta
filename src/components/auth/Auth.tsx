@@ -30,11 +30,11 @@ export default function Auth({ isSignedIn = false }) {
         <>
           <SignIn />
           <p className="mt-4 text-center">
-            Don't have an account?{" "}
+            {`Don't have an account?`}
             <Button onClick={() => setMode("signup")}>Sign Up</Button>
           </p>
           <p className="mt-2 text-center">
-            Forgot your password?{" "}
+            {`Forgot your password?`}
             <Button onClick={() => setMode("reset")}>Reset Password</Button>
           </p>
         </>
@@ -43,7 +43,7 @@ export default function Auth({ isSignedIn = false }) {
         <>
           <SignUp />
           <p className="mt-4 text-center">
-            Already have an account?{" "}
+            {`Already have an account?`}
             <Button onClick={() => setMode("signin")}>Sign In</Button>
           </p>
         </>
@@ -52,7 +52,7 @@ export default function Auth({ isSignedIn = false }) {
         <>
           <PasswordReset />
           <p className="mt-4 text-center">
-            Remember your password?{" "}
+            {`Remember your password?`}
             <Button onClick={() => setMode("signin")} className={linkClass}>
               Sign In
             </Button>

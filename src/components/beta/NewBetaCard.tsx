@@ -14,7 +14,7 @@ export const NewBetaCard = () => {
         <CardTitle>
           Want to add to <em>The Knowledge?</em>
         </CardTitle>
-        <CardDescription>make someone's day!</CardDescription>
+        <CardDescription>{`make someone's day!`}</CardDescription>
       </CardHeader>
       <CardContent>
         <BetaButton />

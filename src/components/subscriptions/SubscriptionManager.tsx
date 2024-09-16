@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useSubscription } from "@/utils/hooks";
+import { Button } from "../ui";
 
 interface SubscriptionManagerProps {
   userId: string;
@@ -10,7 +11,7 @@ interface SubscriptionManagerProps {
 const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
   userId,
 }) => {
-  const { data: subscription, isLoading, error } = useSubscription(userId);
+  const { data, isLoading, error } = useSubscription(userId);
 
   if (isLoading) return <div>Loading subscription info...</div>;
   if (error) return <div>Error loading subscription: {error.message}</div>;
@@ -46,10 +47,8 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
   return (
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <h2 className="text-xl font-bold mb-4">Your Subscription</h2>
-      <p className="mb-4">
-        Status: {subscription?.is_premium ? "Premium" : "Free"}
-      </p>
-      {subscription?.is_premium ? (
+      <p className="mb-4">Status: {data?.isPremium ? "Premium" : "Free"}</p>
+      {data?.isPremium ? (
         <Button
           onClick={handleManageSubscription}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

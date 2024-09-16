@@ -7,8 +7,8 @@ export const getAllBeta = async () => {
   return await supabase.from("beta_reports").select("*");
 };
 
-export const getOneBeta = async (betaId: number) => {
-  return await supabase.from("beta_reports").select().eq("id", betaId);
+export const getOneBeta = async (betaId: string) => {
+  return await supabase.from("beta_reports").select().eq("id", betaId).single();
 };
 
 export const postBeta = async (

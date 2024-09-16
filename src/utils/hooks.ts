@@ -19,7 +19,7 @@ export const useAllBetaQuery = () => {
   });
   return { ...response, data: response.data?.data };
 };
-export const useBetaQuery = (betaId: number) => {
+export const useBetaQuery = (betaId: string) => {
   const response = useQuery({
     queryFn: async () => await getOneBeta(betaId),
     queryKey: ["betaQuery", betaId],
@@ -46,6 +46,10 @@ export const useSubscription = (userId: string) => {
     queryKey: ["subscription", userId],
     queryFn: async () => await getSubscription(userId),
     enabled: !!userId,
+    select: (response) => ({
+      ...response,
+      isPremium: response.data?.is_premium,
+    }),
   });
 };
 

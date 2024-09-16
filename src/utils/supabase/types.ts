@@ -11,17 +11,17 @@ export type Database = {
     Tables: {
       beta_reports: {
         Row: {
-          beta_type: `Type ${0 | 1 | 2 | 3}`;
+          beta_type: string;
+          fun_type: `Type ${0 | 1 | 2 | 3}`;
           body: string;
           created_at: string;
           date: string;
           do_it_again: boolean;
-          fun_type: string;
           gear: Json;
           id: string;
           location: number[];
           location_desc: string;
-          spice: number;
+          spice: 1 | 2 | 3 | 4 | 5;
           title: string;
           updated_at: string;
           user_id: string;

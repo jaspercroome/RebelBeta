@@ -17,8 +17,7 @@ import { AlertCircleIcon, LoaderIcon } from "lucide-react";
 
 export const BetaDetail = (props: { id: string }) => {
   const { id } = props;
-  const { data, status } = useBetaQuery(id);
-  const beta = data?.[0];
+  const { data: beta, status } = useBetaQuery(id);
 
   if (status === "pending") {
     return (
@@ -57,7 +56,7 @@ export const BetaDetail = (props: { id: string }) => {
           </div>
           <div className="w-1/5 h-fit">
             <p className="text-xl font-bold">
-              {doItAgainMap[beta.do_it_again]}
+              {beta.do_it_again ? doItAgainMap.true : doItAgainMap.false}
             </p>
           </div>
         </div>

@@ -27,7 +27,7 @@ export const BetaTable = (props: {
       </TableHeader>
       <TableBody>
         {data?.map((item) => (
-          <TableRow>
+          <TableRow key={item.id}>
             <TableCell className="text-right">
               <Link href={`/beta/${item.id}`} className="w-full">
                 {item.beta_type?.toLocaleUpperCase()}
