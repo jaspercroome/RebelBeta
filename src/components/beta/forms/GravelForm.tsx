@@ -34,7 +34,11 @@ import {
   clearLocalForm,
   FUN_TYPE,
   funTypeMap,
+  spicinessMap,
 } from "../utils";
+import { Database } from "@/utils/supabase/types";
+import { supabaseBrowserClient } from "@/utils/supabase/client";
+import { useSupabase } from "@/components/providers/SupabaseProvider";
 
 const gravelSchema = z.object({
   ...baseFormSchema,
@@ -59,10 +63,15 @@ export const GravelForm = () => {
       }
     | undefined;
 
+  const supa = useSupabase();
+
   const savedValues = savedState?.data;
   const form = useForm<z.infer<typeof gravelSchema>>({
     resolver: zodResolver(gravelSchema),
     defaultValues: {
+      spice: 2,
+      doItAgain: true,
+      funType: "Type 1",
       ...savedValues,
     },
   });
@@ -82,13 +91,18 @@ export const GravelForm = () => {
   }, [formValues]);
 
   const onSubmit = async (values: GravelSchema) => {
-    const data = {
+    if (!supa.user) return;
+    const data: Database["public"]["Tables"]["beta_reports"]["Insert"] = {
       do_it_again: values.doItAgain,
-      created_at: values.date.toLocaleDateString(),
+      date: values.date.toLocaleDateString(),
       body: values.body,
       gear: values.gear,
       location: values.location,
       title: values.title,
+      spice: values.spice,
+      fun_type: values.funType,
+      beta_type: "gravel",
+      user_id: supa.user?.id,
     };
     await supabaseUpdate(data)
       .then((d) => {
@@ -101,24 +115,34 @@ export const GravelForm = () => {
       });
   };
 
+  const handleClear = () => {
+    clearLocalForm(formTitle);
+    form.reset({ title: "New Gravel Report" });
+    router.refresh();
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4 w-full">
           <p className="text-2xl font-bold">Gravel</p>
-          {JSON.stringify(formValues, null, 2)}
           {savedState && (
-            <p className="text-xs italic">
-              Draft - Last saved{" "}
-              {new Date(savedState?.saveDate).toLocaleString()}
-            </p>
+            <div className="w-full justify-between flex flex-row">
+              <p className="text-xs italic">
+                Draft - Last saved{" "}
+                {new Date(savedState?.saveDate).toLocaleString()}
+              </p>
+              <Button onClick={handleClear} className="w-fit" size="sm">
+                Clear Data
+              </Button>
+            </div>
           )}
-          <div className="flex flex-row w-full gap-4 items-end flex-wrap">
+          <div className="flex flex-row w-full items-end flex-wrap flex-start gap-2">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-3/4">
+                <FormItem className="flex flex-col w-3/5">
                   <FormLabel className="text-lg font-bold">Title</FormLabel>
                   <FormControl>
                     <Input
@@ -134,7 +158,7 @@ export const GravelForm = () => {
               control={form.control}
               name="date"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-1/6 items-start">
+                <FormItem className="flex flex-col w-1/6 flex-start">
                   <FormLabel className="text-md">Activity date</FormLabel>
                   <FormControl>
                     <DatePicker
@@ -234,17 +258,9 @@ export const GravelForm = () => {
                   </FormControl>
                   <FormDescription
                     className="text-2xl font-bold"
-                    title={field.value.toString()}
+                    title={field.value?.toString()}
                   >
-                    {field.value < 2
-                      ? "🧊 - so chill"
-                      : field.value < 3
-                        ? "🥛 - chill"
-                        : field.value < 4
-                          ? "🫑 - decent"
-                          : field.value < 5
-                            ? "🌶️ - spicy"
-                            : "🔥 - yowzers"}
+                    {spicinessMap[field?.value as 1 | 2 | 3 | 4 | 5]}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -293,7 +309,7 @@ export const GravelForm = () => {
                   <Textarea {...field} />
                 </FormControl>
                 <FormDescription>
-                  {field.value.length < 100
+                  {field.value?.length < 100
                     ? `${100 - field.value.length} more characters needed`
                     : "Nice Description!"}
                 </FormDescription>

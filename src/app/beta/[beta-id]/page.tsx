@@ -8,7 +8,6 @@ export default async function BetaDetailPage({
 }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-start gap-4 p-24">
-      <p>Beta Detail</p>
       <BetaDetail id={params["beta-id"]} />
     </main>
   );

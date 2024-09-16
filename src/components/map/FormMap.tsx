@@ -26,7 +26,7 @@ export const FormMap: React.FC<FormMapProps> = ({
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/satellite-streets-v12",
+      style: "mapbox://styles/mapbox/streets-v12",
       center: value,
       zoom: 2.5,
       minZoom: 2.5,

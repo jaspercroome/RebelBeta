@@ -4,10 +4,25 @@ export const FUN_TYPE = ["Type 0", "Type 1", "Type 2", "Type 3"] as const;
 export const funTypeMap: {
   [key in (typeof FUN_TYPE)[number]]: string;
 } = {
-  "Type 0": "😴",
-  "Type 1": "😜",
-  "Type 2": "🥵/😅",
-  "Type 3": "😵",
+  "Type 0": "😴 - zzzzzz",
+  "Type 1": "😜 - weeeee",
+  "Type 2": "🥵/😅 - ouch, but yay",
+  "Type 3": "😵 - just ouch",
+};
+
+export const spicinessMap: {
+  [key in 1 | 2 | 3 | 4 | 5]: string;
+} = {
+  1: "🧊 - so chill",
+  2: "🥛 - pretty chill",
+  3: "🫑 - decent",
+  4: "🌶️ - spicy",
+  5: "🔥 - yowzers",
+};
+
+export const doItAgainMap = {
+  true: "👍 - Yeah, I'd do it again",
+  false: "👎 - Nope, Not doing that again",
 };
 
 export const baseFormSchema = {
