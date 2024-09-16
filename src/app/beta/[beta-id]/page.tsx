@@ -1,4 +1,3 @@
-import { getServerSideProps } from "next/dist/build/templates/pages";
 import { BetaDetail } from "./beta-detail";
 
 export default async function BetaDetailPage({
