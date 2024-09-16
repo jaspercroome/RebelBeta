@@ -36,7 +36,7 @@ import {
   funTypeMap,
   spicinessMap,
 } from "../utils";
-import { Database } from "@/utils/supabase/types";
+import { Database, TablesInsert } from "@/utils/supabase/types";
 import { supabaseBrowserClient } from "@/utils/supabase/client";
 import { useSupabase } from "@/components/providers/SupabaseProvider";
 
@@ -92,7 +92,7 @@ export const GravelForm = () => {
 
   const onSubmit = async (values: GravelSchema) => {
     if (!supa.user) return;
-    const data: Database["public"]["Tables"]["beta_reports"]["Insert"] = {
+    const data: TablesInsert<"beta_reports"> = {
       do_it_again: values.doItAgain,
       date: values.date.toLocaleDateString(),
       body: values.body,

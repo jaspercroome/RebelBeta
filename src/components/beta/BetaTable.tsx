@@ -7,10 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Database } from "@/utils/supabase/types";
+import { Tables } from "@/utils/supabase/types";
 import Link from "next/link";
 export const BetaTable = (props: {
-  data?: Database["public"]["Tables"]["beta_reports"]["Row"][] | null;
+  data?: Tables<"beta_reports">[] | null;
 }) => {
   const { data } = props;
 

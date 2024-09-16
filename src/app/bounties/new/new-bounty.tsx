@@ -11,9 +11,10 @@ export const NewBountyForm = () => {
     formState: { errors },
   } = useForm();
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<Map>();
+  const mapRef = useRef<Map | null>(null);
 
-  useEffect(() => {
+  const initializeMap = () => {
+    if (!mapContainerRef.current || mapRef.current) return;
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
 
     mapRef.current = new mapboxgl.Map({
@@ -22,7 +23,17 @@ export const NewBountyForm = () => {
       center: [-74.5, 40], // starting position [lng, lat]
       zoom: 9, // starting zoom
     });
-  });
+  };
+
+  useEffect(() => {
+    initializeMap();
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <form onSubmit={handleSubmit((data) => console.log(data))}>

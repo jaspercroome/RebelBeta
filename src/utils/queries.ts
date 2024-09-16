@@ -1,5 +1,5 @@
 import { supabaseBrowserClient } from "./supabase/client";
-import { Database } from "./supabase/types";
+import { Database, TablesInsert } from "./supabase/types";
 
 const supabase = supabaseBrowserClient();
 
@@ -11,9 +11,7 @@ export const getOneBeta = async (betaId: string) => {
   return await supabase.from("beta_reports").select().eq("id", betaId).single();
 };
 
-export const postBeta = async (
-  beta: Database["public"]["Tables"]["beta_reports"]["Insert"],
-) => {
+export const postBeta = async (beta: TablesInsert<"beta_reports">) => {
   return await supabase.from("beta_reports").insert(beta);
 };
 

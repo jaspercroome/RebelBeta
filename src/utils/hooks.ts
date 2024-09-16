@@ -10,7 +10,7 @@ import {
   postBeta,
 } from "./queries";
 import { useSupabase } from "@/components/providers/SupabaseProvider";
-import { Database } from "./supabase/types";
+import { Database, TablesInsert } from "./supabase/types";
 
 export const useAllBetaQuery = () => {
   const response = useQuery({
@@ -29,9 +29,8 @@ export const useBetaQuery = (betaId: string) => {
 };
 export const usePostBetaMutation = () => {
   return useMutation({
-    mutationFn: async (
-      beta: Database["public"]["Tables"]["beta_reports"]["Insert"],
-    ) => await postBeta(beta),
+    mutationFn: async (beta: TablesInsert<"beta_reports">) =>
+      await postBeta(beta),
     onError: (e) => {
       throw e;
     },
