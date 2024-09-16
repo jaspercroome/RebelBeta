@@ -37,7 +37,7 @@ export const BetaForm = () => {
     }
   };
   return (
-    <Card className="w-4/5">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-4xl font-black">New Beta</CardTitle>
         <CardDescription>Sharing is Caring</CardDescription>
